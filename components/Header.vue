@@ -19,7 +19,51 @@
     </transition>
     <div class="header-right">
       <a class="active" href="#home">Home</a>
-      <a href="#contact">Register</a>
+      <v-dialog transition="dialog-bottom-transition" max-width="600">
+        <template v-slot:activator="{ on, attrs }">
+          <a href="#contact" v-bind="attrs" v-on="on">Register</a>
+        </template>
+        <template v-slot:default="dialog">
+          <v-card>
+            <v-toolbar color="primary white--text">REGISTER</v-toolbar>
+            <v-card-text>
+              <v-col class="mt-5">
+                <v-row>
+                  <v-text-field
+                    label="Username"
+                    solo
+                    class="mr-2"
+                  ></v-text-field>
+                  <v-text-field label="E-Mail" solo></v-text-field>
+                </v-row>
+                <v-row>
+                  <v-text-field
+                    label="Password"
+                    solo
+                    class="mr-2"
+                  ></v-text-field>
+                  <v-text-field label="Password (Again)" solo></v-text-field>
+                </v-row>
+                <v-row>
+                  <v-checkbox
+                    v-model="termsofuse"
+                    label="I accept the therms of use *"
+                  ></v-checkbox>
+                </v-row>
+                <v-row class="mt-0">
+                  <v-checkbox
+                    v-model="termsofuse"
+                    label="I want to recieve information mails"
+                  ></v-checkbox>
+                </v-row>
+              </v-col>
+              <v-row justify="end" class="ma-2">
+                <v-btn fluid large color="primary">Create Account</v-btn>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </template>
+      </v-dialog>
       <a href="#about">Login</a>
     </div>
   </div>
@@ -55,11 +99,13 @@ body {
 .sidenav {
   height: 100%; /* 100% Full-height */
   width: 300px; /* 0 width - change this with JavaScript */
+  border-radius: 0px 50px 50px 0px;
   position: fixed; /* Stay in place */
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
-  background-color: #5e4dd3; /* Black*/
+  background-color: #292929;
+  box-shadow: 5px 1px 10px rgb(34, 34, 34);
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
 }
@@ -71,7 +117,7 @@ body {
   font-size: 36px !important;
   margin-top: 10%;
   display: inline;
-  color: #eb6440 !important;
+  color: #ffffff !important;
   text-shadow: 1px 2px 0px rgb(52, 52, 52);
 }
 
@@ -79,7 +125,7 @@ body {
   width: 100%;
 }
 .sidenav a:hover {
-  font-size: 42px;
+  color: #eb6440 !important;
 }
 /* When you mouse over the navigation links, change their color */
 
@@ -90,7 +136,7 @@ body {
   right: 25px;
   font-size: 36px;
   margin-left: 50px;
-  color: #eb6440 !important;
+  color: #ffffff !important;
   text-shadow: 3px 3px 0px rgb(52, 52, 52);
 }
 
