@@ -23,48 +23,107 @@
         <template v-slot:activator="{ on, attrs }">
           <a href="#contact" v-bind="attrs" v-on="on">Register</a>
         </template>
-        <template v-slot:default="dialog">
+        <template>
           <v-card>
             <v-toolbar color="primary white--text">REGISTER</v-toolbar>
+
+            <v-card-text>
+              <v-form ref="form" v-model="valid" lazy-validation>
+                <v-col class="mt-5">
+                  <v-row>
+                    <v-text-field
+                      label="Username"
+                      v-model="usernameregister"
+                      :rules="nameRules"
+                      solo
+                      class="mr-2"
+                    ></v-text-field>
+                    <v-text-field
+                      :rules="emailRules"
+                      v-model="emailregister"
+                      label="E-Mail"
+                      solo
+                    ></v-text-field>
+                  </v-row>
+                  <v-row>
+                    <v-text-field
+                      label="Password"
+                      v-model="registerpw"
+                      :rules="pwRegisterRules"
+                      :append-icon="showRegisterPw ? 'mdi-eye' : 'mdi-eye-off'"
+                      :type="showRegisterPw ? 'text' : 'password'"
+                      @click:append="showRegisterPw = !showRegisterPw"
+                      solo
+                      class="mr-2"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="registerpw2"
+                      :append-icon="showRegisterPw2 ? 'mdi-eye' : 'mdi-eye-off'"
+                      :type="showRegisterPw2 ? 'text' : 'password'"
+                      :rules="pwRegisterRules"
+                      @click:append="showRegisterPw2 = !showRegisterPw2"
+                      label="Password (Again)"
+                      solo
+                    ></v-text-field>
+                  </v-row>
+                  <v-row>
+                    <v-checkbox
+                      v-model="termsofuse"
+                      :rules="[(v) => !!v || 'You must agree to continue!']"
+                      required
+                      label="I accept the therms of use *"
+                    ></v-checkbox>
+                  </v-row>
+                  <v-row class="mt-0">
+                    <v-checkbox
+                      v-model="permissionbox"
+                      label="I want to recieve information mails"
+                    ></v-checkbox>
+                  </v-row>
+                </v-col>
+                <v-row justify="end" class="ma-2">
+                  <v-btn fluid large color="primary" @click="create"
+                    >Create Account</v-btn
+                  >
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </template>
+      </v-dialog>
+
+      <v-dialog transition="dialog-bottom-transition" max-width="600">
+        <template v-slot:activator="{ on, attrs }">
+          <a href="#about" v-bind="attrs" v-on="on">Login</a>
+        </template>
+        <template>
+          <v-card>
+            <v-toolbar color="primary white--text">LOGIN</v-toolbar>
             <v-card-text>
               <v-col class="mt-5">
-                <v-row>
-                  <v-text-field
-                    label="Username"
-                    solo
-                    class="mr-2"
-                  ></v-text-field>
-                  <v-text-field label="E-Mail" solo></v-text-field>
-                </v-row>
-                <v-row>
-                  <v-text-field
-                    label="Password"
-                    solo
-                    class="mr-2"
-                  ></v-text-field>
-                  <v-text-field label="Password (Again)" solo></v-text-field>
-                </v-row>
-                <v-row>
-                  <v-checkbox
-                    v-model="termsofuse"
-                    label="I accept the therms of use *"
-                  ></v-checkbox>
-                </v-row>
-                <v-row class="mt-0">
-                  <v-checkbox
-                    v-model="termsofuse"
-                    label="I want to recieve information mails"
-                  ></v-checkbox>
-                </v-row>
+                <v-text-field
+                  label="Username or E-Mail"
+                  solo
+                  class="mr-2"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="loginpw"
+                  :append-icon="showLoginPw ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showLoginPw ? 'text' : 'password'"
+                  @click:append="showLoginPw = !showLoginPw"
+                  label="Password"
+                  solo
+                  class="mr-2"
+                ></v-text-field>
               </v-col>
               <v-row justify="end" class="ma-2">
-                <v-btn fluid large color="primary">Create Account</v-btn>
+                <v-btn fluid large color="primary">Login</v-btn>
               </v-row>
             </v-card-text>
           </v-card>
         </template>
       </v-dialog>
-      <a href="#about">Login</a>
     </div>
   </div>
 </template>
@@ -75,9 +134,38 @@ export default {
   data() {
     return {
       navbar: false,
+      termsofuse: false,
+      permissionbox: false,
+      valid: true,
+      nameRules: [
+        (v) => !!v || "Username is required",
+        (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
+      ],
+      pwRegisterRules: [
+        (v) => !!v || "Password is required",
+        (v) =>
+          (v && v.length >= 9) || "Password must be greater than 10 characters",
+        (v) => v == this.registerpw2 || "Passwords not same",
+      ],
+      emailRules: [
+        (v) => !!v || "E-mail is required",
+        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ],
+      showLoginPw: false,
+      showRegisterPw: false,
+      showRegisterPw2: false,
+      loginpw: "Password",
+      registerpw: "Password",
+      registerpw2: "Password",
+      usernameregister: "",
+      emailregister: "",
     };
   },
-  methods: {},
+  methods: {
+    async create() {
+      await app.$axios.$post("user/auth/signup", params);
+    },
+  },
 };
 </script>
 <style scoped>

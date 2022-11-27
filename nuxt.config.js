@@ -36,7 +36,10 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: ["@nuxtjs/axios"],
+  axios: {
+    baseURL: "http://localhost:3000",
+  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -44,7 +47,7 @@ export default {
       dark: false,
       themes: {
         light: {
-          primary: "#4FA095",
+          primary: "#FFC149",
           secondary: "#BAD1C2",
           accent: "#F6F6C9",
           error: "#E14D2A",
@@ -53,7 +56,7 @@ export default {
           warning: "#FD841F",
         },
         dark: {
-          primary: "#4FA095",
+          primary: "#FFC149",
           secondary: "#BAD1C2",
           accent: "#F6F6C9",
           error: "#E14D2A",
