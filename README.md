@@ -1,6 +1,9 @@
 # ToDo is a time management application (Frontend)
 
-Created with Vue & NuxtJS & Jest.
+It's a ToDo Application created with Vue & NuxtJS & Jest.
+It includes register & login auth. 
+You can also check backend repo of this app (builded /w NodeJS & ExpressJS and MongoDB).
+
 Author: Canberk BEREN
 
 ## ToDo List for ToDo App. 💩 
