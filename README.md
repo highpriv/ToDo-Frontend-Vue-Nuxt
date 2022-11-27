@@ -3,6 +3,15 @@
 Created with Vue & NuxtJS & Jest.
 Author: Canberk BEREN
 
+## ToDo List for ToDo App. 💩 
+
+1. Responsive improvements
+2. Basic CRUD requests (/w Axios)
+3. Path and page building
+4. SEO improvements
+5. Performance improvements
+6. Mobile App with React Native (?)
+
 ## Build Setup
 
 ```bash
