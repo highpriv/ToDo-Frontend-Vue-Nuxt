@@ -33,14 +33,14 @@
                   <v-row>
                     <v-text-field
                       label="Username"
-                      v-model="usernameregister"
-                      :rules="[nameRules, required]"
+                      v-model="registerForm.username"
+                      :rules="nameRules"
                       solo
                       class="mr-2"
                     ></v-text-field>
                     <v-text-field
-                      :rules="[emailRules, required]"
-                      v-model="emailregister"
+                      :rules="emailRules"
+                      v-model="registerForm.email"
                       label="E-Mail"
                       solo
                     ></v-text-field>
@@ -48,27 +48,40 @@
                   <v-row>
                     <v-text-field
                       label="Password"
-                      v-model="registerpw"
-                      :rules="[pwRegisterRules, required]"
-                      :append-icon="showRegisterPw ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="showRegisterPw ? 'text' : 'password'"
-                      @click:append="showRegisterPw = !showRegisterPw"
+                      v-model="registerForm.password"
+                      :rules="pwRegisterRules"
+                      :append-icon="
+                        registerForm.show_password ? 'mdi-eye' : 'mdi-eye-off'
+                      "
+                      :type="registerForm.show_password ? 'text' : 'password'"
+                      @click:append="
+                        registerForm.show_password = !registerForm.show_password
+                      "
                       solo
                       class="mr-2"
                     ></v-text-field>
                     <v-text-field
-                      v-model="registerpw2"
-                      :append-icon="showRegisterPw2 ? 'mdi-eye' : 'mdi-eye-off'"
-                      :type="showRegisterPw2 ? 'text' : 'password'"
-                      :rules="[pwRegisterRules, required]"
-                      @click:append="showRegisterPw2 = !showRegisterPw2"
+                      v-model="registerForm.re_password"
+                      :append-icon="
+                        registerForm.show_re_password
+                          ? 'mdi-eye'
+                          : 'mdi-eye-off'
+                      "
+                      :type="
+                        registerForm.show_re_password ? 'text' : 'password'
+                      "
+                      :rules="pwRegisterRules"
+                      @click:append="
+                        registerForm.show_re_password =
+                          !registerForm.show_re_password
+                      "
                       label="Password (Again)"
                       solo
                     ></v-text-field>
                   </v-row>
                   <v-row>
                     <v-checkbox
-                      v-model="termsofuse"
+                      v-model="registerForm.termsOfUse"
                       :rules="[(v) => !!v || 'You must agree to continue!']"
                       required
                       label="I accept the therms of use *"
@@ -76,13 +89,13 @@
                   </v-row>
                   <v-row class="mt-0">
                     <v-checkbox
-                      v-model="permissionbox"
+                      v-model="registerForm.permissions"
                       label="I want to recieve information mails"
                     ></v-checkbox>
                   </v-row>
                 </v-col>
                 <v-row justify="end" class="ma-2">
-                  <v-btn fluid large color="primary" @click="createNewAccount"
+                  <v-btn fluid large color="primary" @click="register"
                     >Create Account</v-btn
                   >
                 </v-row>
@@ -94,71 +107,58 @@
 
       <v-dialog transition="dialog-bottom-transition" max-width="600">
         <template v-slot:activator="{ on, attrs }">
-          <a v-bind="attrs" v-on="on">Login</a>
+          <a href="#about" v-bind="attrs" v-on="on">Login</a>
         </template>
         <template>
           <v-card>
             <v-toolbar color="primary white--text">LOGIN</v-toolbar>
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <v-card-text>
-                <v-col class="mt-5">
-                  <v-text-field
-                    label="Username or E-Mail"
-                    solo
-                    v-model="loginid"
-                    class="mr-2"
-                  ></v-text-field>
+            <v-card-text>
+              <v-col class="mt-5">
+                <v-text-field
+                  v-model="loginForm.username"
+                  label="Username or E-Mail"
+                  solo
+                  class="mr-2"
+                ></v-text-field>
 
-                  <v-text-field
-                    v-model="loginpw"
-                    :append-icon="showLoginPw ? 'mdi-eye' : 'mdi-eye-off'"
-                    :type="showLoginPw ? 'text' : 'password'"
-                    @click:append="showLoginPw = !showLoginPw"
-                    label="Password"
-                    solo
-                    class="mr-2"
-                  ></v-text-field>
-                </v-col>
-                <v-row justify="end" class="ma-2">
-                  <v-btn fluid large color="primary" @click="login"
-                    >Login</v-btn
-                  >
-                </v-row>
-              </v-card-text>
-            </v-form>
+                <v-text-field
+                  v-model="loginForm.password"
+                  :append-icon="
+                    loginForm.show_password ? 'mdi-eye' : 'mdi-eye-off'
+                  "
+                  :type="loginForm.show_password ? 'text' : 'password'"
+                  @click:append="
+                    loginForm.show_password = !loginForm.show_password
+                  "
+                  label="Password"
+                  solo
+                  class="mr-2"
+                ></v-text-field>
+              </v-col>
+              <v-row justify="end" class="ma-2">
+                <v-btn fluid large color="primary" @click="login">Login</v-btn>
+              </v-row>
+            </v-card-text>
           </v-card>
         </template>
       </v-dialog>
 
-      <v-snackbar v-model="registerSuccess" timeout="2000">
-        You registered successfully, redirecting...
+      <!-- register response -->
+      <v-snackbar v-model="registrationResponse.visible" timeout="2000">
+        {{ registrationResponse.text }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
             color="blue"
             text
             v-bind="attrs"
-            @click="this.registerSuccess = false"
+            @click="registrationResponse.visible = false"
           >
             Close
           </v-btn>
         </template>
       </v-snackbar>
-
-      <v-snackbar v-model="registerError" timeout="2000">
-        An error occurred when register. Please try again.
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="blue"
-            text
-            v-bind="attrs"
-            @click="this.registerError = false"
-          >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
+      <!--  -->
     </div>
   </div>
 </template>
@@ -169,62 +169,88 @@ export default {
   data() {
     return {
       navbar: false,
-      registerSuccess: false,
-      registerError: false,
-      termsofuse: false,
-      permissionbox: false,
+
       valid: true,
       nameRules: [
+        (v) => !!v || "Username is required",
         (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
       ],
       pwRegisterRules: [
+        (v) => !!v || "Password is required",
         (v) =>
           (v && v.length >= 9) || "Password must be greater than 10 characters",
-        (v) => v == this.registerpw2 || "Passwords not same",
+        (v) => v == this.registerForm.re_password || "Passwords not same",
       ],
-      required: [(v) => !!v || "This field is required"],
-      emailRules: [(v) => /.+@.+\..+/.test(v) || "E-mail must be valid"],
-      showLoginPw: false,
-      showRegisterPw: false,
-      showRegisterPw2: false,
-      loginid: "",
-      loginpw: "Password",
-      registerpw: "Password",
-      registerpw2: "Password",
-      usernameregister: "",
-      emailregister: "",
+      emailRules: [
+        (v) => !!v || "E-mail is required",
+        (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      ],
+
+      registerForm: {
+        username: "",
+        email: "",
+        password: "",
+        show_password: false,
+        re_password: "",
+        show_re_password: false,
+        termsOfUse: false,
+        permissions: false,
+      },
+      loginForm: {
+        username: "",
+        password: "",
+        show_password: false,
+      },
+      registrationResponse: {
+        status: 0,
+        visible: false,
+        text: "",
+      },
     };
   },
   methods: {
-    async createNewAccount() {
+    async register() {
       try {
         await this.$axios
-          .post("users", {
-            username: this.usernameregister,
-            password: this.registerpw,
-            email: this.emailregister,
+          .$post("users", {
+            username: this.registerForm.username,
+            email: this.registerForm.email,
+            password: this.registerForm.password,
           })
-          .then((resp) => {
-            if (resp.status === 200) this.registerSuccess = true;
-            else this.registerError = true;
+          .then((response) => {
+            if (response.status === 200)
+              (this.registrationResponse.status = 200),
+                (this.registrationResponse.visible = true),
+                (this.registrationResponse.text =
+                  "You registered successfully. You can login your account.");
           });
-      } catch (e) {
-        this.registerError = true;
+      } catch {
+        (this.registrationResponse.status = 500),
+          (this.registrationResponse.visible = true),
+          (this.registrationResponse.text =
+            "An error occured. Check your fields and please try again.");
       }
     },
     async login() {
       try {
         await this.$axios
-          .post("login", {
-            username: this.loginid,
-            password: this.loginpw,
+          .$post("login", {
+            username: this.loginForm.username,
+            password: this.loginForm.password,
           })
-          .then((resp) => {
-            if (resp.status === 200) this.registerSuccess = true;
-            else this.registerError = true;
+          .then((response) => {
+            console.log("asd", response);
+            if (response.status === 200)
+              (this.registrationResponse.status = 200),
+                (this.registrationResponse.visible = true),
+                (this.registrationResponse.text =
+                  "You registered successfully. You can login your account.");
           });
-      } catch (e) {
-        this.registerError = true;
+      } catch {
+        (this.registrationResponse.status = 500),
+          (this.registrationResponse.visible = true),
+          (this.registrationResponse.text =
+            "Username or password is invalid. Check your fields.");
       }
     },
   },
