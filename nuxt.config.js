@@ -2,6 +2,8 @@ import colors from "vuetify/es5/util/colors";
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  ssr: true,
+  target: "server",
   head: {
     titleTemplate: "%s - todo-frontend",
     title: "todo-frontend",
@@ -36,7 +38,7 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios"],
+  modules: ["@nuxtjs/axios", "@nuxtjs/auth-next"],
   axios: {
     baseURL: "http://localhost:3000",
   },

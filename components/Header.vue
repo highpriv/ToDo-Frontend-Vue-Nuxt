@@ -107,7 +107,7 @@
 
       <v-dialog transition="dialog-bottom-transition" max-width="600">
         <template v-slot:activator="{ on, attrs }">
-          <a href="#about" v-bind="attrs" v-on="on">Login</a>
+          <a v-bind="attrs" v-on="on">Login</a>
         </template>
         <template>
           <v-card>
@@ -208,6 +208,7 @@ export default {
       },
     };
   },
+
   methods: {
     async register() {
       try {
@@ -218,17 +219,20 @@ export default {
             password: this.registerForm.password,
           })
           .then((response) => {
-            if (response.status === 200)
-              (this.registrationResponse.status = 200),
-                (this.registrationResponse.visible = true),
-                (this.registrationResponse.text =
-                  "You registered successfully. You can login your account.");
+            if (response.status === 200) {
+              this.registrationResponse = {
+                status: 200,
+                visible: true,
+                text: "You registered successfully. You can login your account",
+              };
+            }
           });
       } catch {
-        (this.registrationResponse.status = 500),
-          (this.registrationResponse.visible = true),
-          (this.registrationResponse.text =
-            "An error occured. Check your fields and please try again.");
+        this.registrationResponse = {
+          status: 500,
+          visible: true,
+          text: "An error occured. Check your fields and please try again.",
+        };
       }
     },
     async login() {
@@ -239,18 +243,23 @@ export default {
             password: this.loginForm.password,
           })
           .then((response) => {
-            console.log("asd", response);
-            if (response.status === 200)
-              (this.registrationResponse.status = 200),
-                (this.registrationResponse.visible = true),
-                (this.registrationResponse.text =
-                  "You registered successfully. You can login your account.");
+            if (response.status === 200) {
+              this.$auth.$storage.setLocalStorage(
+                "tokenUser",
+                response.accessToken
+              );
+
+              this.$router.push({
+                name: "dashboard",
+              });
+            }
           });
       } catch {
-        (this.registrationResponse.status = 500),
-          (this.registrationResponse.visible = true),
-          (this.registrationResponse.text =
-            "Username or password is invalid. Check your fields.");
+        this.registrationResponse = {
+          status: 500,
+          visible: true,
+          text: "Username or password is invalid. Check your fields.",
+        };
       }
     },
   },
