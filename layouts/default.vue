@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <Header />
+      
 
       <Nuxt />
     </v-main>
@@ -14,13 +14,15 @@ export default {
   data() {
     return {};
   },
+  props:{
+    isHeader: {
+      type: Boolean,
+    }
+  }
 };
 </script>
 <style scoped>
 .v-application {
-  background-image: url("../static/background.png");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+
 }
 </style>

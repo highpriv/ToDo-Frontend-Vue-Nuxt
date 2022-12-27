@@ -1,5 +1,7 @@
 <template>
-  <div class="wrapper">
+  
+  <section class="wrapper">
+    <Header />
     <span class="top-text">
       <v-icon color="white"> mdi-pound </v-icon> Always Free!</span
     >
@@ -13,7 +15,7 @@
         <v-icon left> mdi-android </v-icon> Download For Android</v-btn
       >
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -26,14 +28,11 @@ export default {
 };
 </script>
 <style scoped>
+
 .wrapper {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  height:100%;
   text-align: center;
+  background-color:rgb(41, 41, 41);
 }
 .wrapper h2 {
   font-size: 64px;
@@ -50,6 +49,7 @@ export default {
   letter-spacing: 2px;
   color: rgb(255, 255, 255);
   font-weight: 900;
+  margin-top:5%;
 }
 
 .button-section {

@@ -245,8 +245,8 @@ export default {
           .then((response) => {
             if (response.status === 200) {
               this.$auth.$storage.setLocalStorage(
-                "tokenUser",
-                response.accessToken
+                "user",
+                response
               );
 
               this.$router.push({
@@ -337,7 +337,10 @@ ul {
 .header {
   overflow: hidden;
   padding: 2% 5% 2% 5%;
+  background-color:rgb(41, 41, 41)
 }
+
+
 
 .header a.active {
   text-shadow: 3px 3px 0px rgb(52, 52, 52);
@@ -345,6 +348,7 @@ ul {
 
 .header a:hover {
   border-radius: 0;
+  font-size:22px;
   text-shadow: 3px 3px 0px rgb(52, 52, 52);
 }
 
