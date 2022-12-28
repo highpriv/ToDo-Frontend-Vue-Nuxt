@@ -1,5 +1,5 @@
 <template :isHeader="headerStatus">
-  <div class="wrapper">
+  <div class="wrapper" v-if="!loading">
     <v-card width="256" flat class="sidebar">
       <v-navigation-drawer permanent>
         <v-list>
@@ -14,7 +14,9 @@
               <v-list-item-title class="text-h6">
                 @{{ loggedUser.username }}
               </v-list-item-title>
-              <v-list-item-subtitle>{{ loggedUser.email }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{
+                loggedUser.email
+              }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -35,6 +37,16 @@
       </v-navigation-drawer>
     </v-card>
   </div>
+  <div v-else class="wrapper load">
+    <v-progress-circular
+      style="left: 50%; top: 50%"
+      :width="3"
+      color="red"
+      indeterminate
+    >
+    </v-progress-circular>
+    <h2 class="waitText red--text">Please wait</h2>
+  </div>
 </template>
 
 <script>
@@ -42,7 +54,7 @@ export default {
   name: "dashboard",
   data() {
     return {
-
+      loading: true,
       loggedUser: {},
       selectedItem: 0,
       items: [
@@ -56,15 +68,19 @@ export default {
       ],
     };
   },
-  created() {
-    const loggedUserData = this.$auth?.$storage?.getLocalStorage("user");
-    if (!loggedUserData)
-      this.$router.push({
-        name: "IndexPage",
+  async mounted() {
+    try {
+      const resp = await fetch("http://localhost:3000/user", {
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
-    else this.loggedUser = loggedUserData;
+      if (resp.status === 200)
+        (this.loading = false), console.log("asdasd", await resp.json());
+      else this.$router.push({ name: "index" });
+    } catch (err) {
+      this.$router.push({ name: "index" });
+    }
   },
-  methods: {},
 };
 </script>
 <style scoped>
@@ -75,5 +91,17 @@ export default {
 .wrapper {
   height: 100%;
   background-color: rgb(243, 243, 243);
+}
+.load {
+  width: 100%;
+  display: flex;
+}
+.waitText {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10vw;
 }
 </style>

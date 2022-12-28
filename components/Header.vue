@@ -17,7 +17,7 @@
         <a class="sideitem" href="#">Contact</a>
       </div>
     </transition>
-    <div class="header-right">
+    <div class="header-right" v-if="!loggedIn">
       <a class="active" href="#home">Home</a>
       <v-dialog transition="dialog-bottom-transition" max-width="600">
         <template v-slot:activator="{ on, attrs }">
@@ -160,14 +160,25 @@
       </v-snackbar>
       <!--  -->
     </div>
+    <div class="header-right" v-else>
+      <a class="active" href="#home">Home</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="#home">Logout</a>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "Header",
+  props: {
+    loggedIn: {
+      type: Boolean,
+    },
+  },
   data() {
     return {
+      loading: true,
       navbar: false,
 
       valid: true,
@@ -236,31 +247,15 @@ export default {
       }
     },
     async login() {
-      try {
-        await this.$axios
-          .$post("login", {
-            username: this.loginForm.username,
-            password: this.loginForm.password,
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              this.$auth.$storage.setLocalStorage(
-                "user",
-                response
-              );
-
-              this.$router.push({
-                name: "dashboard",
-              });
-            }
-          });
-      } catch {
-        this.registrationResponse = {
-          status: 500,
-          visible: true,
-          text: "Username or password is invalid. Check your fields.",
-        };
-      }
+      await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          username: this.loginForm.username,
+          password: this.loginForm.password,
+        }),
+      });
     },
   },
 };
@@ -337,10 +332,8 @@ ul {
 .header {
   overflow: hidden;
   padding: 2% 5% 2% 5%;
-  background-color:rgb(41, 41, 41)
+  background-color: rgb(41, 41, 41);
 }
-
-
 
 .header a.active {
   text-shadow: 3px 3px 0px rgb(52, 52, 52);
@@ -348,7 +341,7 @@ ul {
 
 .header a:hover {
   border-radius: 0;
-  font-size:22px;
+  font-size: 22px;
   text-shadow: 3px 3px 0px rgb(52, 52, 52);
 }
 

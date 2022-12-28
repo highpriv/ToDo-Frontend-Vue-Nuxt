@@ -1,7 +1,6 @@
 <template>
-  
-  <section class="wrapper">
-    <Header />
+  <section class="wrapper" v-if="!loading">
+    <Header :loggedIn="loggedIn" />
     <span class="top-text">
       <v-icon color="white"> mdi-pound </v-icon> Always Free!</span
     >
@@ -16,23 +15,46 @@
       >
     </div>
   </section>
+  <section v-else class="wrapperLoading load">
+    <v-progress-circular
+      style="left: 50%; top: 50%"
+      :width="3"
+      color="red"
+      indeterminate
+    >
+    </v-progress-circular>
+    <h2 class="waitText red--text">Please wait</h2>
+  </section>
 </template>
 
 <script>
 export default {
   name: "IndexPage",
   data() {
-    return {};
+    return {
+      loading: true,
+      loggedIn: null,
+    };
+  },
+  async mounted() {
+    try {
+      const response = await fetch("http://localhost:3000/user", {
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      if (response.status === 200)
+        (this.loading = false), (this.loggedIn = true);
+      else this.loggedIn = false;
+    } catch (e) {}
   },
   methods: {},
 };
 </script>
 <style scoped>
-
 .wrapper {
-  height:100%;
+  height: 100%;
   text-align: center;
-  background-color:rgb(41, 41, 41);
+  background-color: rgb(41, 41, 41);
 }
 .wrapper h2 {
   font-size: 64px;
@@ -49,10 +71,27 @@ export default {
   letter-spacing: 2px;
   color: rgb(255, 255, 255);
   font-weight: 900;
-  margin-top:5%;
+  margin-top: 5%;
 }
 
 .button-section {
   margin-top: 5%;
+}
+
+.wrapperLoading {
+  height: 100%;
+  background-color: rgb(243, 243, 243);
+}
+.load {
+  width: 100%;
+  display: flex;
+}
+.waitText {
+  width: 100%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10vw;
 }
 </style>
