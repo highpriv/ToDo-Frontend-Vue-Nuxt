@@ -1,41 +1,59 @@
 <template :isHeader="headerStatus">
   <div class="wrapper" v-if="!loading">
-    <v-card width="256" flat class="sidebar">
-      <v-navigation-drawer permanent>
-        <v-list>
-          <v-list-item>
-            <v-list-item-avatar>
-              <v-img src="https://cdn.vuetifyjs.com/images/john.png"></v-img>
-            </v-list-item-avatar>
-          </v-list-item>
+    <v-row>
+      <v-col md="2" sm="2" class="ma-12">
+        <v-card elevation="2" width="100%" flat>
+          <v-navigation-drawer permanent>
+            <v-list class="d-flex justify-center grey lighten-3" elevation="10">
+              <v-list-item
+                class="ml-0"
+                link
+                @click="$router.push({ name: 'profile' })"
+              >
+                <v-list-item-avatar>
+                  <v-img
+                    src="https://cdn.vuetifyjs.com/images/john.png"
+                  ></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title class="text-h6">
+                    @{{ loggedUser.username }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    loggedUser.email
+                  }}</v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list nav class="mt-6">
+              <v-list-item-group v-model="selectedItem" color="primary">
+                <v-list-item v-for="(item, i) in items" :key="i">
+                  <v-list-item-icon>
+                    <v-icon v-text="item.icon"></v-icon>
+                  </v-list-item-icon>
 
-          <v-list-item link>
-            <v-list-item-content>
-              <v-list-item-title class="text-h6">
-                @{{ loggedUser.username }}
-              </v-list-item-title>
-              <v-list-item-subtitle>{{
-                loggedUser.email
-              }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <v-divider></v-divider>
-        <v-list nav dense>
-          <v-list-item-group v-model="selectedItem" color="primary">
-            <v-list-item v-for="(item, i) in items" :key="i">
-              <v-list-item-icon>
-                <v-icon v-text="item.icon"></v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title v-text="item.text"></v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-navigation-drawer>
-    </v-card>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="item.text"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-navigation-drawer>
+        </v-card>
+      </v-col>
+      <v-col class="ma-12">
+        <v-card
+          elevation="2"
+          min-width="100%"
+          min-height="100%"
+          flat
+          class="pa-5"
+        >
+          <h2>Board</h2>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
   <div v-else class="wrapper load">
     <v-progress-circular
@@ -58,13 +76,13 @@ export default {
       loggedUser: {},
       selectedItem: 0,
       items: [
-        { text: "To Do List", icon: "mdi-folder" },
-        { text: "Ongoing Tasks", icon: "mdi-star" },
-        { text: "Completed Tasks", icon: "mdi-account-multiple" },
-        { text: "My Notes", icon: "mdi-history" },
-        { text: "My Agenda", icon: "mdi-check-circle" },
-        { text: "Group Tasks", icon: "mdi-upload" },
-        { text: "Logout", icon: "mdi-cloud-upload" },
+        { text: "To Do List", icon: "mdi-calendar-check" },
+        { text: "Ongoing Tasks", icon: "mdi-clipboard-text-play" },
+        { text: "Completed Tasks", icon: "mdi-text-box-check" },
+        { text: "My Notes", icon: "mdi-clipboard-edit" },
+        { text: "My Agenda", icon: "mdi-view-agenda" },
+        { text: "Group Tasks", icon: "mdi-account-group" },
+        { text: "Logout", icon: "mdi-logout" },
       ],
     };
   },
@@ -75,7 +93,7 @@ export default {
         credentials: "include",
       });
       if (resp.status === 200)
-        (this.loading = false), console.log("asdasd", await resp.json());
+        (this.loading = false), (this.loggedUser = await resp.json());
       else this.$router.push({ name: "index" });
     } catch (err) {
       this.$router.push({ name: "index" });
@@ -84,9 +102,10 @@ export default {
 };
 </script>
 <style scoped>
-.sidebar {
-  margin-left: 6%;
+.board {
   top: 10%;
+  top: 0;
+  left: 0;
 }
 .wrapper {
   height: 100%;

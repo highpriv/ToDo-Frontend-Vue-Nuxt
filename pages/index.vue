@@ -41,10 +41,10 @@ export default {
       const response = await fetch("http://localhost:3000/user", {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+      }).then((resp) => {
+        this.loading = false;
+        if (resp.status === 200) this.loggedIn = true;
       });
-      if (response.status === 200)
-        (this.loading = false), (this.loggedIn = true);
-      else this.loggedIn = false;
     } catch (e) {}
   },
   methods: {},
