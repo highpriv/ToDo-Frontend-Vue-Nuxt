@@ -144,15 +144,15 @@
       </v-dialog>
 
       <!-- register response -->
-      <v-snackbar v-model="registrationResponse.visible" timeout="2000">
-        {{ registrationResponse.text }}
+      <v-snackbar v-model="authResponse.visible" timeout="2000">
+        {{ authResponse.text }}
 
         <template v-slot:action="{ attrs }">
           <v-btn
             color="blue"
             text
             v-bind="attrs"
-            @click="registrationResponse.visible = false"
+            @click="authResponse.visible = false"
           >
             Close
           </v-btn>
@@ -212,7 +212,7 @@ export default {
         password: "",
         show_password: false,
       },
-      registrationResponse: {
+      authResponse: {
         status: 0,
         visible: false,
         text: "",
@@ -223,23 +223,25 @@ export default {
   methods: {
     async register() {
       try {
-        await this.$axios
-          .$post("users", {
+        let response = await fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
             username: this.registerForm.username,
             email: this.registerForm.email,
             password: this.registerForm.password,
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              this.registrationResponse = {
-                status: 200,
-                visible: true,
-                text: "You registered successfully. You can login your account",
-              };
-            }
-          });
+          }),
+        });
+
+        let responseObj = await response.json();
+        this.authResponse = {
+          status: responseObj.status,
+          visible: true,
+          text: responseObj.message,
+        };
       } catch {
-        this.registrationResponse = {
+        this.authResponse = {
           status: 500,
           visible: true,
           text: "An error occured. Check your fields and please try again.",
@@ -247,7 +249,7 @@ export default {
       }
     },
     async login() {
-      await fetch("http://localhost:3000/login", {
+      let response = await fetch("http://localhost:3000/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -256,6 +258,13 @@ export default {
           password: this.loginForm.password,
         }),
       });
+
+      let responseObj = await response.json();
+      this.authResponse = {
+        status: responseObj.status,
+        visible: true,
+        text: responseObj.message,
+      };
     },
   },
 };

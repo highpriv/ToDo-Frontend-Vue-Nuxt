@@ -50,7 +50,7 @@
           flat
           class="pa-5"
         >
-          <h2>Board</h2>
+          <Board :selectedPage="selectedPage" />
         </v-card>
       </v-col>
     </v-row>
@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import Board from "../components/Board.vue";
+
 export default {
   name: "dashboard",
   data() {
@@ -75,10 +77,23 @@ export default {
       loading: true,
       loggedUser: {},
       selectedItem: 0,
+      tasks: {},
       items: [
-        { text: "To Do List", icon: "mdi-calendar-check" },
-        { text: "Ongoing Tasks", icon: "mdi-clipboard-text-play" },
-        { text: "Completed Tasks", icon: "mdi-text-box-check" },
+        {
+          text: "To Do List",
+          icon: "mdi-calendar-check",
+          status: "todo",
+        },
+        {
+          text: "Ongoing Tasks",
+          icon: "mdi-clipboard-text-play",
+          status: "ongoing",
+        },
+        {
+          text: "Completed Tasks",
+          icon: "mdi-text-box-check",
+          status: "completed",
+        },
         { text: "My Notes", icon: "mdi-clipboard-edit" },
         { text: "My Agenda", icon: "mdi-view-agenda" },
         { text: "Group Tasks", icon: "mdi-account-group" },
@@ -86,6 +101,13 @@ export default {
       ],
     };
   },
+
+  computed: {
+    selectedPage() {
+      return this.items[this.selectedItem];
+    },
+  },
+  methods: {},
   async mounted() {
     try {
       const resp = await fetch("http://localhost:3000/user", {
