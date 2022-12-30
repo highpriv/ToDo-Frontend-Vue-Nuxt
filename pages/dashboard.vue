@@ -50,7 +50,10 @@
           flat
           class="pa-5"
         >
-          <Board :selectedPage="selectedPage" />
+          <Board
+            :selectedPage="selectedPage"
+            :taskCount="loggedUser.taskCount"
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -94,9 +97,7 @@ export default {
           icon: "mdi-text-box-check",
           status: "completed",
         },
-        { text: "My Notes", icon: "mdi-clipboard-edit" },
-        { text: "My Agenda", icon: "mdi-view-agenda" },
-        { text: "Group Tasks", icon: "mdi-account-group" },
+
         { text: "Logout", icon: "mdi-logout" },
       ],
     };

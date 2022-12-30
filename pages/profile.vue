@@ -27,14 +27,15 @@
             </v-list>
             <v-divider></v-divider>
             <v-list nav class="mt-6">
-              <v-list-item-group v-model="selectedItem" color="primary">
-                <v-list-item v-for="(item, i) in items" :key="i">
-                  <v-list-item-icon>
-                    <v-icon v-text="item.icon"></v-icon>
-                  </v-list-item-icon>
-
+              <v-list-item-group color="primary">
+                <v-list-item @click="routeBack">
                   <v-list-item-content>
-                    <v-list-item-title v-text="item.text"></v-list-item-title>
+                    <v-list-item-title
+                      class="text-body-1 font-weight-bold text--disabled"
+                    >
+                      <v-icon>mdi-arrow-left</v-icon>
+                      Back To Dashboard</v-list-item-title
+                    >
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -190,14 +191,15 @@ export default {
         { text: "To Do List", icon: "mdi-calendar-check" },
         { text: "Ongoing Tasks", icon: "mdi-clipboard-text-play" },
         { text: "Completed Tasks", icon: "mdi-text-box-check" },
-        { text: "My Notes", icon: "mdi-clipboard-edit" },
-        { text: "My Agenda", icon: "mdi-view-agenda" },
-        { text: "Group Tasks", icon: "mdi-account-group" },
+
         { text: "Logout", icon: "mdi-logout" },
       ],
     };
   },
   methods: {
+    routeBack() {
+      this.$router.push({ name: "dashboard" });
+    },
     async updateProfile() {
       try {
         await fetch("http://localhost:3000/update-profile", {
