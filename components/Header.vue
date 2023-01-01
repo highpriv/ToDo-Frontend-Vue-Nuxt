@@ -70,7 +70,7 @@
                       :type="
                         registerForm.show_re_password ? 'text' : 'password'
                       "
-                      :rules="pwRegisterRules"
+                      :rules="re_pwRegisterRules"
                       @click:append="
                         registerForm.show_re_password =
                           !registerForm.show_re_password
@@ -190,7 +190,12 @@ export default {
         (v) => !!v || "Password is required",
         (v) =>
           (v && v.length >= 9) || "Password must be greater than 10 characters",
-        (v) => v == this.registerForm.re_password || "Passwords not same",
+      ],
+      re_pwRegisterRules: [
+        (v) => !!v || "Password is required",
+        (v) =>
+          (v && v.length >= 9) || "Password must be greater than 10 characters",
+        (v) => v === this.registerForm.password || "Passwords not same",
       ],
       emailRules: [
         (v) => !!v || "E-mail is required",
@@ -227,11 +232,7 @@ export default {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({
-            username: this.registerForm.username,
-            email: this.registerForm.email,
-            password: this.registerForm.password,
-          }),
+          body: JSON.stringify(this.registerForm),
         });
 
         let responseObj = await response.json();
@@ -265,6 +266,8 @@ export default {
         visible: true,
         text: responseObj.message,
       };
+
+      if (responseObj.status === 200) this.$router.push({ name: "dashboard" });
     },
   },
 };

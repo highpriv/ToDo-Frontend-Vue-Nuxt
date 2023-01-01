@@ -137,11 +137,17 @@
           </v-card-actions>
         </v-card>
       </v-col>
+
+      <v-col cols="4" class="mt-5" v-if="!tasks.length">
+        <h2 class="text--disabled">There is no task in this status.</h2>
+      </v-col>
     </v-row>
+
     <div class="text-center mt-12">
       <v-pagination
         v-model="activePage"
-        :length="Math.ceil(taskCount / 9)"
+        v-if="pageCount"
+        :length="Math.ceil(pageCount / 9)"
       ></v-pagination>
     </div>
   </div>
@@ -159,9 +165,10 @@ export default {
       type: Object,
     },
     taskCount: {
-      type: Number,
+      type: Array,
     },
   },
+  computed: {},
   watch: {
     selectedPage: async function (val) {
       this.tasks = [];
@@ -170,6 +177,7 @@ export default {
     activePage: async function () {
       this.tasks = [];
       await this.fetchTasks(this.selectedPage);
+      await this.calculatePageCount();
     },
   },
   data() {
@@ -177,6 +185,7 @@ export default {
       tasks: [],
       loading: true,
       selectedTask: {},
+      pageCount: 0,
       activePage: 1,
       editTaskDialog: false,
       editTaskForm: {
@@ -217,6 +226,8 @@ export default {
   },
   methods: {
     async fetchTasks(val) {
+      this.pageCount = 0;
+
       await fetch(
         "http://localhost:3000/get-tasks/" + val.status + "/" + this.activePage,
         {
@@ -227,7 +238,15 @@ export default {
         .then((response) => response.json())
         .then((json) => (this.tasks = json));
 
+      await this.calculatePageCount();
       this.loading = false;
+    },
+
+    async calculatePageCount() {
+      this.taskCount.map((task) => {
+        let selfCount = task[this.selectedPage.status];
+        if (selfCount) this.pageCount = selfCount;
+      });
     },
 
     async createNewTask() {
@@ -248,8 +267,7 @@ export default {
           title: "",
           description: "",
         }),
-          this.taskCount++;
-        await this.fetchTasks(this.selectedPage);
+          await this.fetchTasks(this.selectedPage);
       } catch {}
       this.newTaskDialog = false;
     },
